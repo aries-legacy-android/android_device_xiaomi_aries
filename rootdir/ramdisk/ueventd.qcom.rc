@@ -1,0 +1,49 @@
+# Xiaomi MI 2 (aries) ueventd rules, AOSP 2.3.7.
+
+# GPU / ION
+/dev/kgsl                 0666   system     system
+/dev/kgsl-3d0             0666   system     system
+/dev/ion                  0664   system     system
+/dev/genlock              0666   system     system
+
+# RTC
+/dev/rtc0                 0600   system     system
+
+# Shared memory / modem interfaces
+/dev/smd0                 0660   system     system
+/dev/smd2                 0660   bluetooth  bluetooth
+/dev/smd3                 0660   bluetooth  bluetooth
+/dev/smd4                 0660   system     system
+/dev/smd7                 0660   bluetooth  bluetooth
+/dev/smdcntl0             0640   radio      radio
+/dev/smdcntl1             0640   radio      radio
+/dev/smdcntl2             0640   radio      radio
+/dev/smdcnt_rev0          0640   radio      radio
+/dev/smdcnt_rev1          0640   radio      radio
+/dev/smd_cxm_qmi          0640   radio      radio
+/dev/smuxctl32            0640   radio      radio
+/dev/sdioctl0             0640   radio      radio
+/dev/rmnet_mux_ctrl       0640   radio      radio
+
+# Debug UARTs
+/dev/ttyHSL0              0660   system     system
+/dev/ttyHSL1              0660   system     system
+
+# Diagnostics
+/dev/diag                 0666   root       root
+
+# Sensors
+/dev/msm_dsps             0660   system     system
+
+# Wi-Fi (prima)
+/dev/wcnss_wlan           0660   system     system
+
+# sysfs rules need five fields: <path> <attribute> <mode> <uid> <gid>
+/sys/devices/system/cpu/cpufreq ondemand/sampling_rate       0664 system system
+/sys/devices/system/cpu/cpufreq ondemand/up_threshold        0664 system system
+/sys/devices/system/cpu/cpufreq ondemand/io_is_busy          0664 system system
+/sys/devices/system/cpu/cpufreq interactive/timer_rate       0664 system system
+/sys/devices/system/cpu/cpufreq interactive/hispeed_freq     0664 system system
+/sys/devices/system/cpu/cpufreq interactive/go_hispeed_load  0664 system system
+/sys/devices/system/cpu/cpufreq interactive/above_hispeed_delay 0664 system system
+/sys/devices/system/cpu/cpufreq interactive/io_is_busy       0664 system system

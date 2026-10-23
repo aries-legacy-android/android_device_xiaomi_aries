@@ -1,0 +1,10 @@
+#
+# system.prop for aries (Xiaomi MI 2)
+#
+
+# RIL, not started yet.
+rild.libpath=/system/lib/libril-qc-qmi-1.so
+rild.libargs=-d /dev/smd0
+
+# Bluetooth uses the SMD transport.
+ro.qualcomm.bt.hci_transport=smd

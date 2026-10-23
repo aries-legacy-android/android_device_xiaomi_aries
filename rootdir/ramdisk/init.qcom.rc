@@ -1,0 +1,83 @@
+# Xiaomi MI 2 (aries) init, AOSP 2.3.7.
+#
+# Loaded by init because androidboot.hardware=qcom.  Actions run after the
+# ones in init.rc, so the MTD mounts defined there are harmlessly overridden.
+
+on early-init
+    mkdir /firmware 0771 system system
+    symlink /data/tombstones /tombstones
+
+on init
+    mkdir /persist 0771 system system
+
+on fs
+    # Wait for the by-name links created by ueventd.
+    wait /dev/block/platform/msm_sdcc.1/by-name/system
+    mount ext4 /dev/block/platform/msm_sdcc.1/by-name/system /system ro barrier=1
+
+    wait /dev/block/platform/msm_sdcc.1/by-name/userdata
+    mount ext4 /dev/block/platform/msm_sdcc.1/by-name/userdata /data nosuid nodev barrier=1
+
+    wait /dev/block/platform/msm_sdcc.1/by-name/cache
+    mount ext4 /dev/block/platform/msm_sdcc.1/by-name/cache /cache nosuid nodev barrier=1
+
+    wait /dev/block/platform/msm_sdcc.1/by-name/persist
+    mount ext4 /dev/block/platform/msm_sdcc.1/by-name/persist /persist nosuid nodev barrier=1
+
+    # The modem partition is FAT and holds the firmware images loaded by PIL.
+    wait /dev/block/platform/msm_sdcc.1/by-name/modem
+    mount vfat /dev/block/platform/msm_sdcc.1/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337
+
+on post-fs
+    mkdir /data/tombstones 0771 system system
+
+    # Internal storage: /data/media exposed as /mnt/sdcard by the FUSE daemon.
+    mkdir /data/media 0775 system sdcard_rw
+    chown system sdcard_rw /data/media
+    chmod 2775 /data/media
+    start sdcard
+
+    mkdir /data/misc 01771 system misc
+    mkdir /data/misc/audio 0770 audio audio
+    mkdir /data/misc/bluetoothd 0770 bluetooth bluetooth
+    mkdir /data/misc/camera 0770 camera camera
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    mkdir /data/misc/keystore 0700 keystore keystore
+    mkdir /data/misc/location 0770 gps gps
+    mkdir /data/property 0700 root root
+    mkdir /data/system 0775 system system
+    mkdir /data/dalvik-cache 0771 system system
+
+on boot
+    write /sys/devices/virtual/graphics/fb0/msm_fb_dispparam 2
+
+    # The lights HAL runs as system.
+    chmod 0664 /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chmod 0664 /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/red/brightness
+    chmod 0664 /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/green/brightness
+    chmod 0664 /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chmod 0664 /sys/class/leds/flashlight/brightness
+    chown system system /sys/class/leds/flashlight/brightness
+
+    # Keep the second core online; there is no mpdecision yet.
+    write /sys/devices/system/cpu/cpu1/online 1
+
+    # No RIL yet.
+    stop ril-daemon
+
+    start usb-gadget
+
+# The daemon runs as uid 1023 and gid 1015 (sdcard_rw).
+service sdcard /system/bin/sdcard /data/media 1023 1015
+    user root
+    disabled
+
+# USB gadget bring-up, runs once from on boot.
+service usb-gadget /system/bin/sh /system/etc/usb-gadget.sh
+    user root
+    disabled
+    oneshot

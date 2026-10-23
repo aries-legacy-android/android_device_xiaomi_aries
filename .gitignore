@@ -1,0 +1,13 @@
+# Build outputs.
+*.o
+*.ko
+*.img
+*.pyc
+
+# Patch and editor leftovers.
+*.orig
+*.rej
+*~
+
+# Blobs live in vendor/xiaomi/aries, never in the device tree.
+proprietary/

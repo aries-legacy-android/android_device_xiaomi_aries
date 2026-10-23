@@ -1,0 +1,6 @@
+# Volume keys.  WAKE keeps them working while the screen is off.
+key 115   VOLUME_UP     WAKE
+key 114   VOLUME_DOWN   WAKE
+key 102   HOME
+key 528   FOCUS
+key 766   CAMERA

@@ -1,0 +1,5 @@
+# No external SD card.  Internal storage is /data/media, exposed as
+# /mnt/sdcard by the FUSE daemon, so vold manages no volumes here.
+
+# To mount USB OTG later:
+# dev_mount usbotg /mnt/usbotg auto /devices/platform/msm_hsusb_host*
