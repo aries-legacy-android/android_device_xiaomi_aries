@@ -63,4 +63,10 @@ TARGET_NO_RECOVERY           := true
 
 BOARD_HAVE_BLUETOOTH         := true
 
+# Wi-Fi: nl80211 supplicant with the in-tree prima module.
+WPA_SUPPLICANT_VERSION       := VER_0_8_X
+BOARD_WPA_SUPPLICANT_DRIVER  := NL80211
+WIFI_DRIVER_MODULE_PATH      := /system/lib/modules/wlan.ko
+WIFI_DRIVER_MODULE_NAME      := wlan
+
 -include vendor/xiaomi/aries/BoardConfigVendor.mk

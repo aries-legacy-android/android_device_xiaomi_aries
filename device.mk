@@ -21,7 +21,10 @@ DEVICE_PATH := device/xiaomi/aries
 PRODUCT_CHARACTERISTICS := nosdcard
 
 PRODUCT_PACKAGES += \
-    lights.msm8960
+    lights.msm8960 \
+    wpa_supplicant \
+    wpa_cli \
+    wcnss_trigger
 
 # Init scripts and vold configuration.
 PRODUCT_COPY_FILES += \
@@ -32,6 +35,10 @@ PRODUCT_COPY_FILES += \
 # USB gadget setup: no UsbDeviceManager in 2.3, the script writes the sysfs.
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/rootdir/etc/usb-gadget.sh:system/etc/usb-gadget.sh
+
+# wifi.c copies this template into its writable configuration file.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/rootdir/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
 
 # APN list; the version must match the framework one or it is dropped.
 PRODUCT_COPY_FILES += \
