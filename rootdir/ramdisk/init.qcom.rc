@@ -76,10 +76,9 @@ on boot
     # No RIL yet.
     stop ril-daemon
 
-    # Opening /dev/wcnss_wlan triggers PIL; the built-in driver does not self-start.
+    # The trigger service opens /dev/wcnss_wlan for PIL and writes the serial number.
     setprop wlan.driver.ath 0
     setprop wlan.driver.config /system/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini
-    write /sys/devices/platform/wcnss_wlan.0/serial_number ${ro.serialno}
     start wcnss-trigger
 
     start usb-gadget
