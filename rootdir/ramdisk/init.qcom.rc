@@ -48,6 +48,13 @@ on post-fs
     mkdir /data/system 0775 system system
     mkdir /data/dalvik-cache 0771 system system
 
+    # GB wifi.c connects through a real directory, not a symlink.
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/system/wpa_supplicant 0770 system wifi
+    chown system wifi /data/system/wpa_supplicant
+    chmod 0770 /data/system/wpa_supplicant
+
 on boot
     write /sys/devices/virtual/graphics/fb0/msm_fb_dispparam 2
 
@@ -69,6 +76,12 @@ on boot
     # No RIL yet.
     stop ril-daemon
 
+    # Opening /dev/wcnss_wlan triggers PIL; the built-in driver does not self-start.
+    setprop wlan.driver.ath 0
+    setprop wlan.driver.config /system/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini
+    write /sys/devices/platform/wcnss_wlan.0/serial_number ${ro.serialno}
+    start wcnss-trigger
+
     start usb-gadget
 
 # The daemon runs as uid 1023 and gid 1015 (sdcard_rw).
@@ -79,5 +92,23 @@ service sdcard /system/bin/sdcard /data/media 1023 1015
 # USB gadget bring-up, runs once from on boot.
 service usb-gadget /system/bin/sh /system/etc/usb-gadget.sh
     user root
+    disabled
+    oneshot
+
+service wcnss-trigger /system/bin/wcnss_trigger
+    user root
+    disabled
+    oneshot
+
+# wifi.c starts this by name; dhcpcd_wlan0 must install the default route.
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+    user root
+    group system wifi
+    disabled
+    oneshot
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+    user root
+    group system dhcp
     disabled
     oneshot
